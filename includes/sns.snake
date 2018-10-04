@@ -1,0 +1,25 @@
+from aws.sns import SNS
+
+def get_name():
+    name = config.get("run_name", None)
+    if name is None:
+      pass
+    return name
+
+onsuccess:
+    print("Workflow finished, no errors")
+    sns = SNS()
+    sns.publish("{} ran ok".format(get_name()))
+
+onerror:
+    print("ERROR: there was an error in the workflow")
+    last_lines = []
+
+    # read through and keep the last 3 lines of the log
+    with open(log) as log_fh:
+        for line in log_fh:
+            last_lines.append(line)
+            last_lines = last_lines[-3:]
+    sns = SNS()
+
+    sns.publish("snakemake error in {}:\n{}".format("\n".join(name, last_lines)))
