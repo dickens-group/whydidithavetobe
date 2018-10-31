@@ -6,6 +6,8 @@ __copyright__ = "Copyright 2018, Nicholas J. Dickens"
 __email__ = "dickensn@fau.edu"
 __license__ = "MIT"
 
+import sys
+
 import boto3
 
 class Region:
