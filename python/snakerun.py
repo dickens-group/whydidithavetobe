@@ -11,15 +11,7 @@ import sys
 import os
 from uuid import uuid4
 
-import boto3
-
-class Jobscript:
-    def __init__(self, s3_path):
-        self.s3_path = s3_path
-        self.filename = self.s3_path.rpartition("/")[2]
-
-    def __str__(self):
-        return "Jobscript object, path:{} filename:{}".format(self.s3_path, self.filename)
+from jobscript import Jobscript
 
 
 def unique_dir(base_path=""):
@@ -35,3 +27,11 @@ def unique_dir(base_path=""):
         print("Could not make the directory: {}".format(dir_name), sys.exc_info()[0])
         raise
     return dir_name
+
+if __name__=="__main__":
+    jobscriptfile = sys.argv[1]
+    # change to a unique dir
+
+    # download the job Jobscript
+
+    # download the snakefile
