@@ -1,8 +1,8 @@
 FROM bitnami/minideb:stretch
 MAINTAINER Johannes Köster <johannes.koester@tu-dortmund.de>
 ENV SINGULARITY_VERSION=2.4.5
-ADD . /tmp/repo
-WORKDIR /tmp/repo
+ADD . /
+WORKDIR /
 ENV PATH /opt/conda/bin:${PATH}
 ENV LANG C.UTF-8
 ENV SHELL /bin/bash
@@ -15,3 +15,4 @@ RUN install_packages wget bzip2 ca-certificates gnupg2 squashfs-tools git && \
     rm Miniconda3-latest-Linux-x86_64.sh && \
     conda update -n base conda && conda env update --name root --file environment.yml && conda clean --all -y && \
     pip install .
+ENTRYPOINT ["python3", "/python/snakerun.py"]
