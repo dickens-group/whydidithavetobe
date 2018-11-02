@@ -9,30 +9,27 @@ __license__ = "MIT"
 
 import os
 import sys
+import re
 from argparse import ArgumentParser
 from pprint import pprint
 
 from snakemake.utils import read_job_properties
 
-class Job:
-    def __init__(self, jobscript):
-        '''
-        '''
-        self.job_properties = read_job_properties(jobscript)
 
-    def check_properties(self):
-        '''make sure that the job_properties dict has all the necessary parts
-        for a Batch submission
-        '''
-        self.memory = None
-        self.threads = None
-        self.jobQueueName = None
-        self.jobDefinitionName = None
-        self.input = None
-        self.output = None
+def get_target_and_snakefile(jobscript):
+    target = None
+    snakefile = None
+    with open(jobscript) as in_fh:
+        for line in in_fh:
+            match_obj = re.match("-m snakemake (\S+) --snakefile (\S+) ", line)
+            if match_obj:
+                target=match_obj.group(1)
+                snakefile=match_obj.group(2)
+    if target is not None and snakefile is not None:
+        return target, snakefile
+    else:
+        sys.exit("ERROR: could not fine target or snakefile in {}".format(jobscript))
 
-    def get_properties(self):
-        return self.job_properties
 
 def get_args():
     '''collect the commandline arguments
@@ -53,8 +50,8 @@ def get_args():
 if __name__=="__main__":
     jobscript = sys.argv[-1]
     dependencies = sys.argv[1:-1]
-    job = Job(jobscript)
-    job_properties = job.get_properties()
+    job_properties = read_job_properties(jobscript)
+    target, snakefile = get_target_and_snakefile(jobscript)
 
     print("{}-{}-{}".format(job_properties['rule'],job_properties['jobid'],len(sys.argv)))
 
@@ -62,9 +59,11 @@ if __name__=="__main__":
         for line in in_fh:
             print(line, file=out_fh)
         print("----------- PROPS -----------------", file=out_fh)
-        pprint(job.get_properties(), out_fh, indent=4)
+        pprint(job_properties, out_fh, indent=4)
         print("----------- DEPS ------------------", file=out_fh)
         pprint(dependencies, out_fh, indent=4)
+        pprint("Target:{}".format(target), out_fh)
+        pprint("Snakefile:{}".format(snakefile), out_fh)
 
 # do something useful with the threads
 #threads = job_properties[threads]
