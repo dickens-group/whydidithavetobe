@@ -1,6 +1,11 @@
 from snakemake.remote.S3 import RemoteProvider as S3RemoteProvider
 S3 = S3RemoteProvider(stay_on_remote=True)
 
+works3 = "hboi-jobs/snakemake/"
+
+
+
+
 rule all:
   input:
     S3.remote("hboi-jobs/Pbceti_genome/01-trimmed/LP2W16W_1k_R1_001_val_1.fq.gz"),
@@ -16,7 +21,8 @@ rule fastqc:
   threads: 2
   params:
     jobQueueName="highPriority-test-reserved",
-    jobDefinitionName="fastqc:latest"
+    jobDefinitionName="fastqc",
+    jobDefinitionRevision=28
   resources:
     mem_mb=4096
   run:
@@ -34,7 +40,8 @@ rule trim_galore:
   threads: 2
   params:
     jobQueueName="highPriority-test-reserved",
-    jobDefinitionName="trim_galore:latest"
+    jobDefinitionName="trim_galore:latest",
+    jobDefinitionRevision=5
   resources:
     mem_mb=4096
   run:

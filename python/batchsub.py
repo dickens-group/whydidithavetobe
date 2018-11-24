@@ -15,6 +15,8 @@ from pprint import pprint
 
 from snakemake.utils import read_job_properties
 
+from aws.s3 import S3
+from aws.batch import Job
 
 def get_target_and_snakefile(jobscript):
     target = None
@@ -28,7 +30,7 @@ def get_target_and_snakefile(jobscript):
     if target is not None and snakefile is not None:
         return target, snakefile
     else:
-        sys.exit("ERROR: could not fine target or snakefile in {}".format(jobscript))
+        sys.exit("ERROR: could not find target or snakefile in {}".format(jobscript))
 
 
 def get_args():
@@ -53,17 +55,32 @@ if __name__=="__main__":
     job_properties = read_job_properties(jobscript)
     target, snakefile = get_target_and_snakefile(jobscript)
 
-    print("{}-{}-{}".format(job_properties['rule'],job_properties['jobid'],len(sys.argv)))
+    # upload snakefile
 
-    with open(jobscript) as in_fh, open("job_{}.sh".format(job_properties['jobid']),"tw") as out_fh:
-        for line in in_fh:
-            print(line, file=out_fh)
-        print("----------- PROPS -----------------", file=out_fh)
-        pprint(job_properties, out_fh, indent=4)
-        print("----------- DEPS ------------------", file=out_fh)
-        pprint(dependencies, out_fh, indent=4)
-        pprint("Target:{}".format(target), out_fh)
-        pprint("Snakefile:{}".format(snakefile), out_fh)
+    # submit batch job
+    if target == "all":
+        jobId = "all"
+        quit()
+        # this should hold some sort of notifier job?
+    else:
+        jobId = ""
+
+        job = Job("{}-{}-{}".format(snakefile,job_properties['jobid'],job_properties['params']['jobDefinitionName']))
+
+        
+            job_properties['params']['jobDefinitionName']
+            job_properties['params']['jobDefinitionRevision']
+            job_properties['params']['jobQueueName']
+
+        with open(jobscript) as in_fh, open("job_{}.sh".format(job_properties['jobid']),"tw") as out_fh:
+            for line in in_fh:
+                print(line, file=out_fh)
+            print("----------- PROPS -----------------", file=out_fh)
+            pprint(job_properties, out_fh, indent=4)
+            print("----------- DEPS ------------------", file=out_fh)
+            pprint(dependencies, out_fh, indent=4)
+            pprint("Target:{}".format(target), out_fh)
+            pprint("Snakefile:{}".format(snakefile), out_fh)
 
 # do something useful with the threads
 #threads = job_properties[threads]

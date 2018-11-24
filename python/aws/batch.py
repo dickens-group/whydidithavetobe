@@ -64,19 +64,12 @@ class Job:
 
         return max_revision
 
-    def set_jobdef(self):
-        if self.revision is None:
+    def set_jobdef(self, revision=None):
+        if revision is None:
             self.revision = self.get_revision()
+        else:
+            self.revision = revision
         self.job_definition = "{}:{}".format(self.task_name, self.revision)
-
-    def set_jobname(self):
-        (prefix, sep, suffix) = self.filename.partition(".")
-        self.jobname = "{}-{}".format(prefix, self.task_name)
-
-    def set_json(self):
-        json = "{}/{}/{}".format(self.bucket, self.prefix, self.filename)
-        json = json.replace("//","/")
-        self.json = json
 
     def submit_job(self):
         response = None
@@ -89,7 +82,7 @@ class Job:
                     dependsOn=self.dependency,
                     parameters={'vcpus': str(self.cpus),'memory': str(self.memory)},
                     arrayProperties={'size' : self.array_size },
-                    containerOverrides={'vcpus': self.cpus,'memory': self.memory,'command': ['--s3',self.json]}
+                    containerOverrides={'vcpus': self.cpus,'memory': self.memory,'command': [self.json]}
                     )
             else:
                 response = self.batch.submit_job(
@@ -98,7 +91,7 @@ class Job:
                     jobQueue=self.job_queue,
                     dependsOn=self.dependency,
                     parameters={'vcpus': str(self.cpus),'memory': str(self.memory)},
-                    containerOverrides={'vcpus': self.cpus,'memory': self.memory,'command': ['--s3',self.json]}
+                    containerOverrides={'vcpus': self.cpus,'memory': self.memory,'command': [self.json]}
                     )
         else:
             if self.array_size is not None:
@@ -108,7 +101,7 @@ class Job:
                     jobQueue=self.job_queue,
                     parameters={'vcpus': str(self.cpus),'memory': str(self.memory)},
                     arrayProperties={'size' : self.array_size },
-                    containerOverrides={'vcpus': self.cpus,'memory': self.memory,'command': ['--s3',self.json]}
+                    containerOverrides={'vcpus': self.cpus,'memory': self.memory,'command': [self.json]}
                     )
             else:
                 response = self.batch.submit_job(
@@ -116,7 +109,7 @@ class Job:
                     jobName=self.jobname,
                     jobQueue=self.job_queue,
                     parameters={'vcpus': str(self.cpus),'memory': str(self.memory)},
-                    containerOverrides={'vcpus': self.cpus,'memory': self.memory,'command': ['--s3',self.json]}
+                    containerOverrides={'vcpus': self.cpus,'memory': self.memory,'command': [self.json]}
                     )
 
 
