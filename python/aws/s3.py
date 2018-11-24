@@ -75,6 +75,14 @@ class S3:
         s3_object = self.s3.get_object(Bucket=self.bucket, Key=self.key)
         return s3_object['Body'].read().decode('utf-8')
 
+    def exists(self):
+        '''return true if the S3 object exists '''
+        if self.get_size():
+            return True
+        else:
+            return False
+            
+
 if __name__=="__main__":
     # crude tests
     s3 = S3("whydidithavetobe","test.txt")
