@@ -15,13 +15,13 @@ from region import Region
 class Job:
     '''class to connect AWS batch json
     '''
-    def __init__(self, jobName, jobId=None, region=None):
+    def __init__(self, job_def, job_queue, jobId=None, revision=None, region=None):
         self.region = region
         self.set_batch()
-        # self.region = Region(aws_region)
-        #
-        #
-        # self.job_queue = job_queue
+        self.region = Region(aws_region)
+
+        self.job_def  = job_def
+        self.job_queue = job_queue
         # self.task_name = task_name
         #
         # self.filename = filename
@@ -31,6 +31,7 @@ class Job:
         # self.cpus = cpus
         # self.memory = memory
         #
+        self.set_revision()
         # self.revision = revision
         # self.dependency = dependency
         # self.array_size = array_size
