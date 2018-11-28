@@ -1,0 +1,39 @@
+from snakemake.remote.S3 import RemoteProvider as S3RemoteProvider
+S3 = S3RemoteProvider()
+
+rule all:
+  input:
+    S3.remote("hboi-jobs/Pbceti_genome/01-trimmed/LP2W16W_1k_R1_001_val_1.fq.gz"),
+    S3.remote("hboi-jobs/Pbceti_genome/01-trimmed/LP2W16W_1k_R2_001_val_2.fq.gz")
+
+rule fastqc:
+  input:
+    S3.remote("data-shed/test/dickens/1k_edna_reads/LP2W16W_1k_R1_001.fastq.gz"),
+    S3.remote("data-shed/test/dickens/1k_edna_reads/LP2W16W_1k_R2_001.fastq.gz")
+  output:
+    S3.remote("hboi-jobs/Pbceti_genome/00-fastqc/LP2W16W_1k_R1_001_fastqc.zip"),
+    S3.remote("hboi-jobs/Pbceti_genome/00-fastqc/LP2W16W_1k_R2_001_fastqc.zip")
+  threads: 2
+  singularity:
+    "docker://531546992904.dkr.ecr.us-east-1.amazonaws.com/snakemake-fastqc:latest"
+  resources:
+    mem_mb=4096
+  shell:
+    "fastqc -t {threads} {input[0]} {input[1]}"
+
+rule trim_galore:
+  input:
+    S3.remote("data-shed/test/dickens/1k_edna_reads/LP2W16W_1k_R1_001.fastq.gz"),
+    S3.remote("data-shed/test/dickens/1k_edna_reads/LP2W16W_1k_R2_001.fastq.gz"),
+    S3.remote("hboi-jobs/Pbceti_genome/00-fastqc/LP2W16W_1k_R1_001_fastqc.zip"),
+    S3.remote("hboi-jobs/Pbceti_genome/00-fastqc/LP2W16W_1k_R2_001_fastqc.zip")
+  output:
+    S3.remote("hboi-jobs/Pbceti_genome/01-trimmed/LP2W16W_1k_R1_001_val_1.fq.gz"),
+    S3.remote("hboi-jobs/Pbceti_genome/01-trimmed/LP2W16W_1k_R2_001_val_2.fq.gz")
+  threads: 2
+  singularity:
+    "docker://531546992904.dkr.ecr.us-east-1.amazonaws.com/snakemake-trim_galore:latest"
+  resources:
+    mem_mb=4096
+  shell:
+    "trim_galore -q 20 --paired {input[0]} {input[1]}"

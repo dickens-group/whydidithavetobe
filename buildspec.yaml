@@ -1,0 +1,26 @@
+version: 0.2
+
+env:
+  parameter-store:
+    # Account-specific options
+    account_id: account_id
+    region: default_region
+    job_role: job_role_name
+phases:
+  pre_build:
+    commands:
+      - echo "Log in to ECR"
+      - ecr_login=`aws ecr get-login --region $region`
+      - ecr_login=`echo $ecr_login | sed 's/-e none//'`
+      - $ecr_login
+  build:
+    commands:
+      - echo "Building the docker container"
+      - docker build -t snakemake-$task_name:$task_version -t snakemake-$task_name:latest -f docker/snakemake-$task_name.dockerfile .
+  post_build:
+    commands:
+      - echo "Tag and push to ECR"
+      - docker tag snakemake-$task_name:$task_version $account_id.dkr.ecr.$region.amazonaws.com/snakemake-$task_name:$task_version
+      - docker push $account_id.dkr.ecr.$region.amazonaws.com/snakemake-$task_name:$task_version
+      - docker tag snakemake-$task_name:latest $account_id.dkr.ecr.$region.amazonaws.com/snakemake-$task_name:latest
+      - docker push $account_id.dkr.ecr.$region.amazonaws.com/snakemake-$task_name:latest
