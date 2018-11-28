@@ -15,7 +15,6 @@ class SNS:
     """Send AWS SNS notifications
     """
     def __init__(self, topicArn=None, region=None):
-        self.ssm = None
         if region is not None:
             self.region = region
         else:
@@ -28,17 +27,6 @@ class SNS:
             self.topicArn = "arn:aws:sns:us-east-1:{}:{}".format(account_id, topic_name)
         self.sns = boto3.client('sns',self.region)
 
-    def get_from_parameter_store(self, parameter_name):
-        """
-        """
-        if self.ssm is None:
-            self.ssm = boto3.client('ssm')
-        value = None
-        try:
-            value = self.ssm.get_parameter(Name=parameter_name)['Parameter']['Value']
-        except:
-            sys.exit("ERROR: parameter {} is not available from the parameter store!".format(parameter_name))
-        return value
 
     def publish(self, message, subject="SNS"):
         response=self.sns.publish(TopicArn=self.topicArn, Subject=subject, Message=message)

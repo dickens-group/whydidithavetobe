@@ -1,17 +1,7 @@
 from snakemake.remote.S3 import RemoteProvider as S3RemoteProvider
-<<<<<<< HEAD
-#S3 = S3RemoteProvider(stay_on_remote=True)
-S3 = S3RemoteProvider()
-
-#works3 = "hboi-jobs/snakemake/"
-=======
 S3 = S3RemoteProvider(stay_on_remote=True)
 
-works3 = "hboi-jobs/snakemake/"
->>>>>>> a27eca369ac9ab5a9e1fbdd1552918efa5c36493
-
-
-
+workdir: "/scratch"
 
 rule all:
   input:
@@ -28,12 +18,13 @@ rule fastqc:
   threads: 2
   params:
     jobQueueName="highPriority-test-reserved",
-    jobDefinitionName="fastqc",
-    jobDefinitionRevision=28
+    jobDefinitionName="fastqc:latest"
+  conda:
+    "envs/fastqc.yaml"
   resources:
     mem_mb=4096
-  run:
-    shell("fastqc -t {threads} {input[0]} {input[1]}")
+  shell:
+    "fastqc -t {threads} {input[0]} {input[1]}"
 
 rule trim_galore:
   input:
@@ -47,12 +38,7 @@ rule trim_galore:
   threads: 2
   params:
     jobQueueName="highPriority-test-reserved",
-<<<<<<< HEAD
-    jobDefinitionName="trim_galore",
-=======
-    jobDefinitionName="trim_galore:latest",
->>>>>>> a27eca369ac9ab5a9e1fbdd1552918efa5c36493
-    jobDefinitionRevision=5
+    jobDefinitionName="trim_galore:latest"
   resources:
     mem_mb=4096
   run:
