@@ -30,7 +30,8 @@ environment_variables= [
     ]
 
 # repository check
-repo = Ecr(task_name)
+#repo = Ecr(task_name)
+repo = Ecr("snakemake-" + task_name)
 
 build = Codebuild("whydidithavetobe-build", environment_variables)
 if build.success(max_time=25):

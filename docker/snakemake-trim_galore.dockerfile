@@ -13,6 +13,5 @@ RUN install_packages wget bzip2 ca-certificates gnupg2 squashfs-tools git && \
     wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
     bash Miniconda3-latest-Linux-x86_64.sh -b -p /opt/conda && \
     rm Miniconda3-latest-Linux-x86_64.sh && \
-    conda update -n base conda && conda env update --name root --file environment.yml && conda clean --all -y && \
-    pip install .
-RUN conda install -y trim-galore
+    conda update -n base conda && conda env update --name root --file environment.yml && conda clean --all -y 
+RUN conda install -c bioconda -c conda-forge -y trim-galore
