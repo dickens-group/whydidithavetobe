@@ -32,7 +32,7 @@ environment_variables= [
 # repository check
 repo = Ecr(task_name)
 
-build = Codebuild("hboi-jobs-build-task", environment_variables)
+build = Codebuild("whydidithavetobe-build", environment_variables)
 if build.success(max_time=25):
     print("Build ok for {}.".format(build.get_name()))
 else:
