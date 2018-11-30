@@ -15,8 +15,9 @@ phases:
       - $ecr_login
   build:
     commands:
+      - cd docker
       - echo "Building the docker container"
-      - docker build -t snakemake-$task_name:$task_version -t snakemake-$task_name:latest -f docker/snakemake-$task_name.dockerfile .
+      - docker build -t snakemake-$task_name:$task_version -t snakemake-$task_name:latest -f snakemake-$task_name.dockerfile .
   post_build:
     commands:
       - echo "Tag and push to ECR"
