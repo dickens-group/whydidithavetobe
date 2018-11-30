@@ -14,4 +14,4 @@ RUN install_packages wget bzip2 ca-certificates gnupg2 squashfs-tools git && \
     bash Miniconda3-latest-Linux-x86_64.sh -b -p /opt/conda && \
     rm Miniconda3-latest-Linux-x86_64.sh && \
     conda update -n base conda && conda env update --name root --file environment.yml && conda clean --all -y
-RUN conda install -y fastqc
+RUN conda install -y -c bioconda -c conda-forge fastqc
