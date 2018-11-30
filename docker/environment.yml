@@ -30,3 +30,4 @@ dependencies:
   - xorg-libxrender
   - xorg-libxpm
   - gitpython
+  - snakemake
