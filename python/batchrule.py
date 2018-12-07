@@ -12,7 +12,6 @@ import json
 
 from uuid import uuid4
 
-from submit import Submitter
 
 class BatchRule:
     ''' BatchRule class

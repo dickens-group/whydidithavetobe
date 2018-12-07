@@ -72,13 +72,13 @@ if __name__=="__main__":
 
         with open(jobscript) as in_fh, open("job_{}.sh".format(job_properties['jobid']),"tw") as out_fh:
             for line in in_fh:
-                print(line, file=out_fh)
-            print("----------- PROPS -----------------", file=out_fh)
-            pprint(job_properties, out_fh, indent=4)
-            print("----------- DEPS ------------------", file=out_fh)
-            pprint(dependencies, out_fh, indent=4)
-            pprint("Target:{}".format(target), out_fh)
-            pprint("Snakefile:{}".format(snakefile), out_fh)
+                out_fh.write(line)
+            # print("----------- PROPS -----------------", file=out_fh)
+            # pprint(job_properties, out_fh, indent=4)
+            # print("----------- DEPS ------------------", file=out_fh)
+            # pprint(dependencies, out_fh, indent=4)
+            # pprint("Target:{}".format(target), out_fh)
+            # pprint("Snakefile:{}".format(snakefile), out_fh)
 
 # do something useful with the threads
 #threads = job_properties[threads]

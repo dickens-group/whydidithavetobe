@@ -9,35 +9,37 @@ S3 = S3RemoteProvider()
 
 rule all:
   input:
-    S3.remote("hboi-jobs/Pbceti_genome/01-trimmed/LP2W16W_1k_R1_001_val_1.fq.gz"),
-    S3.remote("hboi-jobs/Pbceti_genome/01-trimmed/LP2W16W_1k_R2_001_val_2.fq.gz")
+    "LP2W16W_1k_R1_001_val_1.fq.gz",
+    "LP2W16W_1k_R2_001_val_2.fq.gz"
 
 rule fastqc:
   input:
     S3.remote("data-shed/test/dickens/1k_edna_reads/LP2W16W_1k_R1_001.fastq.gz"),
     S3.remote("data-shed/test/dickens/1k_edna_reads/LP2W16W_1k_R2_001.fastq.gz")
   output:
-    S3.remote("hboi-jobs/Pbceti_genome/00-fastqc/LP2W16W_1k_R1_001_fastqc.zip"),
-    S3.remote("hboi-jobs/Pbceti_genome/00-fastqc/LP2W16W_1k_R2_001_fastqc.zip")
+    "LP2W16W_1k_R1_001_fastqc.zip",
+    "LP2W16W_1k_R2_001_fastqc.zip"
   threads: 2
+  conda:
+    "envs/fastqc.yaml"
   params:
     jobQueueName="highPriority-test-reserved",
     jobDefinitionName="fastqc",
     jobDefinitionRevision=28
   resources:
     mem_mb=4096
-  run:
-    shell("fastqc -t {threads} {input[0]} {input[1]}")
+  shell:
+    "fastqc -t {threads} -o . {input[0]} {input[1]}"
 
 rule trim_galore:
   input:
     S3.remote("data-shed/test/dickens/1k_edna_reads/LP2W16W_1k_R1_001.fastq.gz"),
     S3.remote("data-shed/test/dickens/1k_edna_reads/LP2W16W_1k_R2_001.fastq.gz"),
-    S3.remote("hboi-jobs/Pbceti_genome/00-fastqc/LP2W16W_1k_R1_001_fastqc.zip"),
-    S3.remote("hboi-jobs/Pbceti_genome/00-fastqc/LP2W16W_1k_R2_001_fastqc.zip")
+    "LP2W16W_1k_R1_001_fastqc.zip",
+    "LP2W16W_1k_R2_001_fastqc.zip"
   output:
-    S3.remote("hboi-jobs/Pbceti_genome/01-trimmed/LP2W16W_1k_R1_001_val_1.fq.gz"),
-    S3.remote("hboi-jobs/Pbceti_genome/01-trimmed/LP2W16W_1k_R2_001_val_2.fq.gz")
+    "LP2W16W_1k_R1_001_val_1.fq.gz",
+    "LP2W16W_1k_R2_001_val_2.fq.gz"
   threads: 2
   params:
     jobQueueName="highPriority-test-reserved",
@@ -45,5 +47,5 @@ rule trim_galore:
     jobDefinitionRevision=5
   resources:
     mem_mb=4096
-  run:
-    shell("trim_galore -q 20 --paired {input[0]} {input[1]}")
+  shell:
+    "bin/trim_galore -q 20 -o . --paired {input[0]} {input[1]}"

@@ -5,19 +5,12 @@
 \
 
 python \
-
--m snakemake s3://hboi-jobs/Pbceti_genome/00-fastqc/LP2W16W_1k_R1_001_fastqc.zip --snakefile simple_trim_batch.snake \
-
---force -j --keep-target-files --keep-remote \
-
+-m snakemake hboi-jobs/Pbceti_genome/00-fastqc/LP2W16W_1k_R1_001_fastqc.zip --snakefile simple_trim_batch.snake \
+--force -j --keep-target-files  \
 --wait-for-files  --latency-wait 5 \
-
  --attempt 1 --force-use-threads \
-
 --wrapper-prefix https://bitbucket.org/snakemake/snakemake-wrappers/raw/ \
-
    --nocolor \
-
 --notemp --no-hooks --nolock --mode 2  --allowed-rules fastqc  && exit 0 || exit 1
 
 
